@@ -26,3 +26,17 @@ class Asteroid(CircleShape):
         asteroid2 = Asteroid(pos2.x, pos2.y, new_radius)
         asteroid1.velocity = self.velocity1
         asteroid2.velocity = self.velocity2
+    def bounce(self, other: "Asteroid") -> None:
+        # Calculate the normal vector between the two asteroids
+        normal = (self.position - other.position).normalize()
+        # Calculate the relative velocity along the normal
+        relative_velocity = self.velocity - other.velocity
+        velocity_along_normal = relative_velocity.dot(normal)
+        # If the asteroids are moving away from each other, do nothing
+        if velocity_along_normal > 0:
+            return
+        # Calculate the impulse scalar
+        impulse_scalar = -2 * velocity_along_normal / 2  # Assuming equal mass
+        # Apply the impulse to both asteroids
+        self.velocity += impulse_scalar * normal
+        other.velocity -= impulse_scalar * normal
